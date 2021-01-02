@@ -68,6 +68,21 @@ function tic_tac_toe() {
 	# Declare a new array "board".
 	declare -A board
 
+	# Is the game running?
+	isRunning=true
+
+	# Players.
+	playerX="X"
+	playerO="O"
+
+	x=0
+	y=0
+
+	# Who is on the move?
+	playerTurn=$playerX
+
+	goAgain=false
+
 	#####################
 	#                   #
 	#     Functions     #
@@ -83,23 +98,42 @@ function tic_tac_toe() {
 			#echo "i: $i"
 
 			# Default cell values.
-			board[$i]="0"
+			board[$i]="_"
 		done
 	}
 
 	# Display board.
 	function display_board() {
 		
+		first=true
+
+		# Mark all columns.
+		for ((i=1; i<boardSize+1; i++))
+		do
+			if [[ $first == true ]]
+			then
+				echo -n "     $i  "
+				first=false
+			else
+				echo -n "   $i  "
+			fi
+		done
+
+		echo -e "\n"
+
+		# Variable for making rows.
+		j=0
+
 		for ((i=1; i<boardSize*boardSize+1; i++))
 		do
 			# If we are on the beginnig of every line.
 			if [[ $(($((i-1)) % $boardSize)) -eq 0 ]]
 			then
-				echo -n "| "
+				echo -n "$((++j)) | "
 			fi
 
 			# Print cell value at index "i".
-			echo -n "_${board[$((i-1))]}_"
+			echo -n " ${board[$((i-1))]} "
 			echo -n " | "
 
 			# If we are at the end of every line.
@@ -108,14 +142,87 @@ function tic_tac_toe() {
 				#echo "$i is divisible by $boardSize"
 
 				# Go on the new line.
-				echo
+				echo -e "\n"
 			fi
 		done
 	}
 
-	create_board
-	display_board
+	function place_char() {
+		x=$1
+		y=$2
 
+		i=$(((x-1)+boardSize*(y-1)))
+		echo -e "\ni: $i"
+		cellChar=${board[$i]}
+		echo "cellChar: $cellChar"
+
+		if [[ $cellChar == "_" ]]
+		then
+			goAgain=false
+
+			# If the player X is on the move.
+			if [[ $playerTurn == "X" ]]
+			then
+				# Fill with X.
+				board[$i]=$playerTurn
+				playerTurn=$playerO
+			else
+				# Fill with O.
+				board[$i]=$playerTurn
+				playerTurn=$playerX
+			fi
+		else
+			goAgain=true
+		fi
+	}
+
+	function player_move() {
+		currentPlayer=$1
+
+		if [[ $goAgain == true ]]
+		then
+			echo "That space is already filled. You are going again."
+		fi
+
+		if [[ $currentPlayer == "X" ]]
+		then
+			echo -e "Player ${cl_red}$currentPlayer${cl_reset}"
+			read -n1 -p "X: " x
+
+			echo
+
+			read -n1 -p "Y: " y
+
+			place_char $x $y
+
+			#playerTurn=$playerO
+
+			echo
+		else
+			echo -e "Player ${cl_red}$currentPlayer${cl_reset}"
+			read -n1 -p "X: " x
+
+			echo
+
+			read -n1 -p "Y: " y
+
+			place_char $x $y
+
+			#playerTurn=$playerX
+
+			echo
+		fi
+	}
+
+	create_board
+
+	while $isRunning
+	do
+		display_board
+		player_move $playerTurn
+		#check_victory
+		clear
+	done
 	
 }
 
