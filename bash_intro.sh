@@ -12,12 +12,42 @@ cl_reset="\033[0;0m"
 # Create main function.
 # It needs to be called last.
 function main() {
-	# Get user name.
-	echo -ne "And who might you be? -> ${cl_red}"
-	read name
+	display_menu
+}
 
-	# Printing it to the terminal.
-	echo -e "${cl_reset}Hello -> ${cl_green}$name${cl_reset} <-"
+# Menu.
+function display_menu() {
+
+	# Greet the user.
+	echo -ne "Welcome back, ${cl_red}${USER^^}${cl_reset}! "
+	# Print date.
+	echo "Today is: $(date +"%m-%d-%Y")"
+
+	# Infinite loop.
+	while true
+	do
+		echo -e "\nWhat would you like to do now?\n"
+		echo "1) do a magic trick"
+		echo "2) do math"
+		echo -e "0) ${cl_red}exit${cl_reset}\n"
+
+		read -n1 -p "Enter now: " option
+
+		clear
+
+		case $option in
+			1) do_magic ;;
+			2) do_math ;;
+			# Break the while loop.
+			0) break ;;
+		esac
+	done
+
+	echo -e "\n\n${cl_green}Have a nice day!${cl_reset}"
+}
+
+function do_math() {
+	# Asking for favorite number.
 	echo -ne "\nWhat is your favorite number? -> "
 
 	# Get user favorite number.
@@ -34,18 +64,56 @@ function main() {
 		echo "error: Not a number"
 	# If the input was a number (integer or not)
 	else
-		# Print favorite number.
-		echo "Your favorite number is: $favorite_number"
-
-		echo "Simple Math with number $favorite_number"
+		echo -e "\n\t\t**** Simple Math with number $favorite_number ****\n"
 		# Do a little math with that number.
 		# Call function do_math() with one argument.
-		do_math $favorite_number
+		do_operations $favorite_number
 	fi
 }
 
+# Do magic.
+function do_magic() {
+	# Really?
+	echo
+	read -s -n1 -p "Are you sure? [Y/N]" magic
+
+	# Checking input with case statement.
+	case $magic in
+		# Is the "magic" variable equal to "y" or "Y"?
+		# If so call the function do_magic() with argument "screenfetch".
+		y|Y) check_package screenfetch ;;
+		# If the input was "n" or "N".
+		n|N) echo -e "\nNO MAGIC" ;;
+		# If the input was something else.
+		*) echo -e "\nWRONG INPUT" ;;
+	# Case statement ends with esac keyword.
+	esac
+}
+
+# Check if the package is installed & if not, install it.
+function check_package() {
+	# Check if the package is installed.
+	# Package is passed as first argument.
+	dpkg -s $1 &> /dev/null
+
+	# If the package is installed.
+	if [ $? -eq 0 ]
+	then
+		# Clear the screen and run it.
+		clear && $1
+	# If the package is NOT installed.
+	else
+		# Downloads the package lists from the repos.
+		sudo apt-get -y update
+		# Install package.
+		sudo apt-get -y install $1
+		clear && $1
+	fi
+}
+
+
 # Do simple math operations + - * /
-function do_math() {
+function do_operations() {
 	# Create variable "number".
 	# Put a value of first argument inside it.
 	number=$1
@@ -70,6 +138,7 @@ function get_random_number() {
 	echo $((1 + $RANDOM % 100))
 }
 
+# Do math operation.
 function operation() {
 	# Operator to use.
 	op=$1
@@ -99,7 +168,7 @@ function operation() {
 	# operator is /
 	elif [[ $op == "/" ]]
 	then
-		echo -ne "$((n1/n2))\t${cl_blue}remainder: $((n1%n2))${cl_reset}"
+		echo -e "$((n1/n2))\t${cl_blue}remainder: $((n1%n2))${cl_reset}"
 	fi
 
 }
