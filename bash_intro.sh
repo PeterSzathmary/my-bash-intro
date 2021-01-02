@@ -29,6 +29,7 @@ function display_menu() {
 		echo -e "\nWhat would you like to do now?\n"
 		echo "1) do a magic trick"
 		echo "2) do math"
+		echo "3) Tic-Tac-Toe game"
 		echo -e "0) ${cl_red}exit${cl_reset}\n"
 
 		read -n1 -p "Enter now: " option
@@ -38,12 +39,84 @@ function display_menu() {
 		case $option in
 			1) do_magic ;;
 			2) do_math ;;
+			3) tic_tac_toe ;;
 			# Break the while loop.
 			0) break ;;
 		esac
 	done
 
 	echo -e "\n\n${cl_green}Have a nice day!${cl_reset}"
+}
+
+# Tic-Tac-Toe game with predefined size.
+function tic_tac_toe() {
+
+	# Clear the screen.
+	clear
+
+	echo -e "${cl_green}=== Tic-Tac-Toe Game ===${cl_reset}"
+
+	######################
+	#                    #
+	#     Variables      #
+	#                    #
+	######################
+
+	# Size of the board.
+	boardSize=5
+
+	# Declare a new array "board".
+	declare -A board
+
+	#####################
+	#                   #
+	#     Functions     #
+	#                   #
+	#####################
+
+	# Create board for the game.
+	function create_board() {
+		
+		for ((i=0; i<boardSize*boardSize; i++))
+		do
+			# This is working fine...
+			#echo "i: $i"
+
+			# Default cell values.
+			board[$i]="0"
+		done
+	}
+
+	# Display board.
+	function display_board() {
+		
+		for ((i=1; i<boardSize*boardSize+1; i++))
+		do
+			# If we are on the beginnig of every line.
+			if [[ $(($((i-1)) % $boardSize)) -eq 0 ]]
+			then
+				echo -n "| "
+			fi
+
+			# Print cell value at index "i".
+			echo -n "_${board[$((i-1))]}_"
+			echo -n " | "
+
+			# If we are at the end of every line.
+			if [[ $(($i % $boardSize)) -eq 0 ]]
+			then
+				#echo "$i is divisible by $boardSize"
+
+				# Go on the new line.
+				echo
+			fi
+		done
+	}
+
+	create_board
+	display_board
+
+	
 }
 
 function do_math() {
@@ -174,4 +247,5 @@ function operation() {
 }
 
 # Calling main function.
-main
+#main
+tic_tac_toe
