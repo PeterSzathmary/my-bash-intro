@@ -52,9 +52,7 @@ function display_menu() {
 function tic_tac_toe() {
 
 	# Clear the screen.
-	clear
-
-	echo -e "${cl_green}=== Tic-Tac-Toe Game ===${cl_reset}"
+	clear	
 
 	######################
 	#                    #
@@ -64,6 +62,12 @@ function tic_tac_toe() {
 
 	# Size of the board.
 	boardSize=5
+
+	# Set victory condition.
+	victoryOn=3
+
+	# Which player has won?
+	playerWon="-"
 
 	# Declare a new array "board".
 	declare -A board
@@ -99,6 +103,7 @@ function tic_tac_toe() {
 
 			# Default cell values.
 			board[$i]="_"
+			#board[$i]=$i
 		done
 	}
 
@@ -214,13 +219,75 @@ function tic_tac_toe() {
 		fi
 	}
 
+	# Check horizontal victory for current player.
+	function check_horizontal() {
+
+		# Helper variable.
+		# I am using it, because I want to move in 1D array as it was 2D.
+		#
+		#
+		# Or maybe I am totally wrong, but it works. :)
+		currentRow=1
+
+		# Check all rows.
+		for((i=0;i<boardSize*boardSize;i++))
+		do
+			#
+			if [[ ${board[$i]} == $currentPlayer && ${board[$((i+1))]} == $currentPlayer && ${board[$((i+2))]} == $currentPlayer ]]
+			then
+				# Victory message!
+				echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+				# 0 - true
+				return 0
+			fi
+
+			#
+			if [[ $i -eq $((boardSize*currentRow-victoryOn)) ]]
+			then
+				i=$((i+victoryOn-1))
+				currentRow=$((currentRow+1))
+
+				# Continue the loop.
+				continue
+			fi
+		done
+
+		# 0 - false
+		return 1
+	}
+
+	# Check victory for current player.
+	function check_victory() {
+
+		if check_horizontal
+		then
+			return 0
+		else
+			return 1
+		fi
+
+		#clear
+	}
+
 	create_board
 
+	# Game loop.
 	while $isRunning
 	do
+		echo -e "${cl_green}=== Tic-Tac-Toe Game ===${cl_reset}"
+
+		# Alwaus display actual board.
 		display_board
-		player_move $playerTurn
-		#check_victory
+
+		# If one of the players has won, break the loop.
+		if check_victory
+		then
+			echo "Ending game!"
+			break
+		# Otherwise, continue playing.
+		else
+			player_move $playerTurn
+		fi
 		clear
 	done
 	
