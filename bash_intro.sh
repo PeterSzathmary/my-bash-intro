@@ -12,7 +12,8 @@ cl_reset="\033[0;0m"
 # Create main function.
 # It needs to be called last.
 function main() {
-	display_menu
+	bS=$1
+	display_menu ${bS}
 }
 
 # Menu.
@@ -39,7 +40,7 @@ function display_menu() {
 		case $option in
 			1) do_magic ;;
 			2) do_math ;;
-			3) tic_tac_toe ;;
+			3) tic_tac_toe ${bS};;
 			# Break the while loop.
 			0) break ;;
 		esac
@@ -61,7 +62,7 @@ function tic_tac_toe() {
 	######################
 
 	# Size of the board.
-	boardSize=5
+	boardSize=$1
 
 	# Set victory condition.
 	victoryOn=3
@@ -229,10 +230,10 @@ function tic_tac_toe() {
 		# Or maybe I am totally wrong, but it works. :)
 		currentRow=1
 
-		# Check all rows.
+		# Loop through all rows.
 		for((i=0;i<boardSize*boardSize;i++))
 		do
-			#
+			# Check victory.
 			if [[ ${board[$i]} == $currentPlayer && ${board[$((i+1))]} == $currentPlayer && ${board[$((i+2))]} == $currentPlayer ]]
 			then
 				# Victory message!
@@ -252,14 +253,53 @@ function tic_tac_toe() {
 			fi
 		done
 
-		# 0 - false
+		# 1 - false
+		return 1
+	}
+
+	function check_vertical() {
+		verticalMaxIndex=$(((boardSize*boardSize-1)-(boardSize*(victoryOn-1))))
+		#echo "verticalMaxIndex: $verticalMaxIndex"
+
+		# Loop through all columns.
+		for((i=0;i<$verticalMaxIndex;i++))
+		do
+			# Check victory.
+			if [[ ${board[$((i))]} == $currentPlayer && ${board[$((i+boardSize*1))]} == $currentPlayer && ${board[$((i+boardSize*2))]} == $currentPlayer ]]
+			then
+				# Victory message!
+				echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+				# 0 - true
+				return 0
+			fi
+		done
+
+		# 1 - false
+		return 1
+	}
+
+	function check_dLeft(){
+		return 1
+	}
+
+	function check_dRight() {
+		return 1
+	}
+
+	function check_diagonal() {
+		if check_dLeft || check_dRight
+		then
+			return 0
+		fi
 		return 1
 	}
 
 	# Check victory for current player.
 	function check_victory() {
 
-		if check_horizontal
+		#check_vertical
+
+		if check_horizontal || check_vertical #|| check_diagonal
 		then
 			return 0
 		else
@@ -421,5 +461,5 @@ function operation() {
 }
 
 # Calling main function.
-#main
-tic_tac_toe
+#main $1
+tic_tac_toe $1
