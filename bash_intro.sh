@@ -4,6 +4,7 @@
 cl_red="\033[0;31m"
 cl_green="\033[0;32m"
 cl_blue="\033[0;34m"
+cl_magenta="\033[0;35m"
 cl_cyan="\033[0;36m"
 
 # Reset all to default.
@@ -141,7 +142,15 @@ function tic_tac_toe() {
 			fi
 
 			# Print cell value at index "i".
-			echo -n " ${board[$((i-1))]} "
+			if [[ ${board[$((i-1))]} == "X" ]]
+			then
+				echo -ne " ${cl_cyan}${board[$((i-1))]}${cl_reset} "
+			elif [[ ${board[$((i-1))]} == "O" ]]
+			then
+				echo -ne " ${cl_magenta}${board[$((i-1))]}${cl_reset} "
+			else
+				echo -n " ${board[$((i-1))]} "
+			fi
 			echo -n " | "
 
 			# If we are at the end of every line.
@@ -194,7 +203,7 @@ function tic_tac_toe() {
 
 		if [[ $currentPlayer == "X" ]]
 		then
-			echo -e "Player ${cl_red}$currentPlayer${cl_reset}"
+			echo -e "Player ${cl_cyan}$currentPlayer${cl_reset}"
 			read -n1 -p "X: " x
 
 			echo
@@ -207,7 +216,7 @@ function tic_tac_toe() {
 
 			echo
 		else
-			echo -e "Player ${cl_red}$currentPlayer${cl_reset}"
+			echo -e "Player ${cl_magenta}$currentPlayer${cl_reset}"
 			read -n1 -p "X: " x
 
 			echo
@@ -381,7 +390,7 @@ function tic_tac_toe() {
 		for((i=0;i<=$verticalMaxIndex;i++))
 		do
 
-			# Check victory in left diagonal.
+			# Check victory in right diagonal.
 			if [[ $victoryOn -eq 3 ]]
 			then
 				if [[ ${board[$i]} == $currentPlayer && ${board[$((i+boardSize+1))]} == $currentPlayer && ${board[$((i+boardSize*2+2))]} == $currentPlayer ]]
@@ -412,9 +421,9 @@ function tic_tac_toe() {
 			fi
 
 			# If the index is at the last possible index in the current row.
-			if [[ $i -eq $((boardSize*currentRow-(victoryOn-1)-1)) ]]
+			if [[ $i -eq $((boardSize*currentRow-(victoryOn-1)-1)) ]] # 5*1 - (3-1) - 1 = 5 - 2 - 1 = 2
 			then
-				i=$((i+boardSize-1))
+				i=$((i+boardSize-(victoryOn-1)-1))
 				currentRow=$((currentRow+1))
 
 				# Continue the loop.
