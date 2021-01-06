@@ -382,12 +382,33 @@ function tic_tac_toe() {
 		do
 
 			# Check victory in left diagonal.
-			if [[ ${board[$i]} == $currentPlayer && ${board[$((i+boardSize+1))]} == $currentPlayer && ${board[$((i+boardSize*2+2))]} == $currentPlayer ]]
+			if [[ $victoryOn -eq 3 ]]
 			then
-				# Victory message!
-				echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
-				# 0 - true
-				return 0
+				if [[ ${board[$i]} == $currentPlayer && ${board[$((i+boardSize+1))]} == $currentPlayer && ${board[$((i+boardSize*2+2))]} == $currentPlayer ]]
+				then
+					# Victory message!
+					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					# 0 - true
+					return 0
+				fi
+			elif [[ $victoryOn -eq 4 ]]
+			then
+				if [[ ${board[$i]} == $currentPlayer && ${board[$((i+boardSize+1))]} == $currentPlayer && ${board[$((i+boardSize*2+2))]} == $currentPlayer && ${board[$((i+boardSize*3+3))]} == $currentPlayer ]]
+				then
+					# Victory message!
+					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					# 0 - true
+					return 0
+				fi
+			elif [[ $victoryOn -eq 5 ]]
+			then
+				if [[ ${board[$i]} == $currentPlayer && ${board[$((i+boardSize+1))]} == $currentPlayer && ${board[$((i+boardSize*2+2))]} == $currentPlayer && ${board[$((i+boardSize*3+3))]} == $currentPlayer && ${board[$((i+boardSize*4+4))]} == $currentPlayer ]]
+				then
+					# Victory message!
+					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					# 0 - true
+					return 0
+				fi
 			fi
 
 			# If the index is at the last possible index in the current row.
