@@ -13,7 +13,9 @@ cl_reset="\033[0;0m"
 # It needs to be called last.
 function main() {
 	bS=$1
-	display_menu ${bS}
+	# Victory On
+	vO=$2
+	display_menu ${bS} ${vO}
 }
 
 # Menu.
@@ -40,7 +42,7 @@ function display_menu() {
 		case $option in
 			1) do_magic ;;
 			2) do_math ;;
-			3) tic_tac_toe ${bS};;
+			3) tic_tac_toe ${bS} ${vO} ;;
 			# Break the while loop.
 			0) break ;;
 		esac
@@ -65,7 +67,7 @@ function tic_tac_toe() {
 	boardSize=$1
 
 	# Set victory condition.
-	victoryOn=3
+	victoryOn=$2
 
 	# Which player has won?
 	playerWon="-"
@@ -234,15 +236,36 @@ function tic_tac_toe() {
 		for((i=0;i<boardSize*boardSize;i++))
 		do
 			# Check victory.
-			if [[ ${board[$i]} == $currentPlayer && ${board[$((i+1))]} == $currentPlayer && ${board[$((i+2))]} == $currentPlayer ]]
+			if [[ $victoryOn -eq 3 ]]
 			then
-				# Victory message!
-				echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
-				# 0 - true
-				return 0
+				if [[ ${board[$i]} == $currentPlayer && ${board[$((i+1))]} == $currentPlayer && ${board[$((i+2))]} == $currentPlayer ]]
+				then
+					# Victory message!
+					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					# 0 - true
+					return 0
+				fi
+			elif [[ $victoryOn -eq 4 ]]
+			then
+				if [[ ${board[$i]} == $currentPlayer && ${board[$((i+1))]} == $currentPlayer && ${board[$((i+2))]} == $currentPlayer && ${board[$((i+3))]} == $currentPlayer ]]
+				then
+					# Victory message!
+					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					# 0 - true
+					return 0
+				fi
+			elif [[ $victoryOn -eq 5 ]]
+			then
+				if [[ ${board[$i]} == $currentPlayer && ${board[$((i+1))]} == $currentPlayer && ${board[$((i+2))]} == $currentPlayer && ${board[$((i+3))]} == $currentPlayer && ${board[$((i+4))]} == $currentPlayer ]]
+				then
+					# Victory message!
+					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					# 0 - true
+					return 0
+				fi
 			fi
 
-			#
+			# If the index is at the last possible index in the current row.
 			if [[ $i -eq $((boardSize*currentRow-victoryOn)) ]]
 			then
 				i=$((i+victoryOn-1))
@@ -279,10 +302,64 @@ function tic_tac_toe() {
 	}
 
 	function check_dLeft(){
+		verticalMaxIndex=$(((boardSize*boardSize-1)-(boardSize*(victoryOn-1))))
+		currentRow=1
+
+		for((i=$((victoryOn-1));i<$verticalMaxIndex;i++))
+		do
+
+			# Check victory in left diagonal.
+			if [[ ${board[$i]} == $currentPlayer && ${board[$((i+boardSize-1))]} == $currentPlayer && ${board[$((i+boardSize*2-2))]} == $currentPlayer ]]
+			then
+				# Victory message!
+				echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+				# 0 - true
+				return 0
+			fi
+
+			# If the index is at the last possible index in the current row.
+			if [[ $i -eq $((boardSize*currentRow-1)) ]]
+			then
+				i=$((i+victoryOn-1))
+				currentRow=$((currentRow+1))
+
+				# Continue the loop.
+				continue
+			fi
+		done
+
+		# 1 - false
 		return 1
 	}
 
 	function check_dRight() {
+		verticalMaxIndex=$(((boardSize*boardSize-1)-(boardSize*(victoryOn-1)-(victoryOn-1)))) # (5*5-1) - 5*(3-1) - (3 - 1) = 24 - 10 - (3 - 1) = 12 
+		currentRow=1
+
+		for((i=0;i<$verticalMaxIndex;i++))
+		do
+
+			# Check victory in left diagonal.
+			if [[ ${board[$i]} == $currentPlayer && ${board[$((i+boardSize+1))]} == $currentPlayer && ${board[$((i+boardSize*2+2))]} == $currentPlayer ]]
+			then
+				# Victory message!
+				echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+				# 0 - true
+				return 0
+			fi
+
+			# If the index is at the last possible index in the current row.
+			if [[ $i -eq $((boardSize*currentRow-(victoryOn-1)-1)) ]]
+			then
+				i=$((i+boardSize-1))
+				currentRow=$((currentRow+1))
+
+				# Continue the loop.
+				continue
+			fi
+		done
+
+		# 1 - false
 		return 1
 	}
 
@@ -299,7 +376,7 @@ function tic_tac_toe() {
 
 		#check_vertical
 
-		if check_horizontal || check_vertical #|| check_diagonal
+		if check_horizontal || check_vertical || check_diagonal
 		then
 			return 0
 		else
@@ -461,5 +538,5 @@ function operation() {
 }
 
 # Calling main function.
-#main $1
-tic_tac_toe $1
+#main $1 $2
+tic_tac_toe $1 $2
