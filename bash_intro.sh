@@ -281,19 +281,40 @@ function tic_tac_toe() {
 	}
 
 	function check_vertical() {
-		verticalMaxIndex=$(((boardSize*boardSize-1)-(boardSize*(victoryOn-1))))
+		verticalMaxIndex=$(((boardSize*boardSize-1)-(boardSize*(victoryOn-1)))) # (9*9-1)-(9*(5-1)) = 80 - 36 = 44
 		#echo "verticalMaxIndex: $verticalMaxIndex"
 
 		# Loop through all columns.
-		for((i=0;i<$verticalMaxIndex;i++))
+		for((i=0;i<=$verticalMaxIndex;i++))
 		do
 			# Check victory.
-			if [[ ${board[$((i))]} == $currentPlayer && ${board[$((i+boardSize*1))]} == $currentPlayer && ${board[$((i+boardSize*2))]} == $currentPlayer ]]
+			if [[ $victoryOn -eq 3 ]]
 			then
-				# Victory message!
-				echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
-				# 0 - true
-				return 0
+				if [[ ${board[$((i))]} == $currentPlayer && ${board[$((i+boardSize*1))]} == $currentPlayer && ${board[$((i+boardSize*2))]} == $currentPlayer ]]
+				then
+					# Victory message!
+					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					# 0 - true
+					return 0
+				fi
+			elif [[ $victoryOn -eq 4 ]]
+			then
+				if [[ ${board[$((i))]} == $currentPlayer && ${board[$((i+boardSize*1))]} == $currentPlayer && ${board[$((i+boardSize*2))]} == $currentPlayer && ${board[$((i+boardSize*3))]} == $currentPlayer ]]
+				then
+					# Victory message!
+					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					# 0 - true
+					return 0
+				fi
+			elif [[ $victoryOn -eq 5 ]]
+			then
+				if [[ ${board[$((i))]} == $currentPlayer && ${board[$((i+boardSize*1))]} == $currentPlayer && ${board[$((i+boardSize*2))]} == $currentPlayer && ${board[$((i+boardSize*3))]} == $currentPlayer && ${board[$((i+boardSize*4))]} == $currentPlayer ]]
+				then
+					# Victory message!
+					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					# 0 - true
+					return 0
+				fi
 			fi
 		done
 
