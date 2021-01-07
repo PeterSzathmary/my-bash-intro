@@ -13,10 +13,7 @@ cl_reset="\033[0;0m"
 # Create main function.
 # It needs to be called last.
 function main() {
-	bS=$1
-	# Victory On
-	vO=$2
-	display_menu ${bS} ${vO}
+	display_menu
 }
 
 # Menu.
@@ -43,7 +40,19 @@ function display_menu() {
 		case $option in
 			1) do_magic ;;
 			2) do_math ;;
-			3) tic_tac_toe ${bS} ${vO} ;;
+			3)
+				echo -n "Board size [3-9]: "
+				read -n1 size
+				echo
+				echo -n "Select difficulty [3/4/5]: "
+				read -n1 difficulty
+				echo
+				if [[ $difficulty -le $size ]]
+				then	
+				       	tic_tac_toe ${size} ${difficulty}
+				else
+					echo "Board size should be greater than or equal to difficulty."
+				fi ;;
 			# Break the while loop.
 			0) break ;;
 		esac
@@ -193,6 +202,17 @@ function tic_tac_toe() {
 		fi
 	}
 
+	function print_victory() {
+		currentPlayer=$1
+
+		if [[ $currentPlayer == "X" ]]
+		then
+			echo -e "${cl_cyan}Player $currentPlayer has won !!!!${cl_reset}"
+		else
+			echo -e "${cl_magenta}Player $currentPlayer has won !!!!${cl_reset}"
+		fi
+	}
+
 	function player_move() {
 		currentPlayer=$1
 
@@ -250,7 +270,7 @@ function tic_tac_toe() {
 				if [[ ${board[$i]} == $currentPlayer && ${board[$((i+1))]} == $currentPlayer && ${board[$((i+2))]} == $currentPlayer ]]
 				then
 					# Victory message!
-					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					print_victory $currentPlayer
 					# 0 - true
 					return 0
 				fi
@@ -259,7 +279,7 @@ function tic_tac_toe() {
 				if [[ ${board[$i]} == $currentPlayer && ${board[$((i+1))]} == $currentPlayer && ${board[$((i+2))]} == $currentPlayer && ${board[$((i+3))]} == $currentPlayer ]]
 				then
 					# Victory message!
-					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					print_victory $currentPlayer
 					# 0 - true
 					return 0
 				fi
@@ -268,7 +288,8 @@ function tic_tac_toe() {
 				if [[ ${board[$i]} == $currentPlayer && ${board[$((i+1))]} == $currentPlayer && ${board[$((i+2))]} == $currentPlayer && ${board[$((i+3))]} == $currentPlayer && ${board[$((i+4))]} == $currentPlayer ]]
 				then
 					# Victory message!
-					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					print_victory $currentPlayer
+
 					# 0 - true
 					return 0
 				fi
@@ -302,7 +323,7 @@ function tic_tac_toe() {
 				if [[ ${board[$((i))]} == $currentPlayer && ${board[$((i+boardSize*1))]} == $currentPlayer && ${board[$((i+boardSize*2))]} == $currentPlayer ]]
 				then
 					# Victory message!
-					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					print_victory $currentPlayer
 					# 0 - true
 					return 0
 				fi
@@ -311,7 +332,7 @@ function tic_tac_toe() {
 				if [[ ${board[$((i))]} == $currentPlayer && ${board[$((i+boardSize*1))]} == $currentPlayer && ${board[$((i+boardSize*2))]} == $currentPlayer && ${board[$((i+boardSize*3))]} == $currentPlayer ]]
 				then
 					# Victory message!
-					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					print_victory $currentPlayer
 					# 0 - true
 					return 0
 				fi
@@ -320,7 +341,7 @@ function tic_tac_toe() {
 				if [[ ${board[$((i))]} == $currentPlayer && ${board[$((i+boardSize*1))]} == $currentPlayer && ${board[$((i+boardSize*2))]} == $currentPlayer && ${board[$((i+boardSize*3))]} == $currentPlayer && ${board[$((i+boardSize*4))]} == $currentPlayer ]]
 				then
 					# Victory message!
-					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					print_victory $currentPlayer
 					# 0 - true
 					return 0
 				fi
@@ -344,7 +365,7 @@ function tic_tac_toe() {
 				if [[ ${board[$i]} == $currentPlayer && ${board[$((i+boardSize-1))]} == $currentPlayer && ${board[$((i+boardSize*2-2))]} == $currentPlayer ]]
 				then
 					# Victory message!
-					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					print_victory $currentPlayer
 					# 0 - true
 					return 0
 				fi
@@ -353,7 +374,7 @@ function tic_tac_toe() {
 				if [[ ${board[$i]} == $currentPlayer && ${board[$((i+boardSize-1))]} == $currentPlayer && ${board[$((i+boardSize*2-2))]} == $currentPlayer && ${board[$((i+boardSize*3-3))]} == $currentPlayer ]]
 				then
 					# Victory message!
-					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					print_victory $currentPlayer
 					# 0 - true
 					return 0
 				fi
@@ -362,7 +383,7 @@ function tic_tac_toe() {
 				if [[ ${board[$i]} == $currentPlayer && ${board[$((i+boardSize-1))]} == $currentPlayer && ${board[$((i+boardSize*2-2))]} == $currentPlayer && ${board[$((i+boardSize*3-3))]} == $currentPlayer && ${board[$((i+boardSize*4-4))]} == $currentPlayer ]]
 				then
 					# Victory message!
-					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					print_victory $currentPlayer
 					# 0 - true
 					return 0
 				fi
@@ -396,7 +417,7 @@ function tic_tac_toe() {
 				if [[ ${board[$i]} == $currentPlayer && ${board[$((i+boardSize+1))]} == $currentPlayer && ${board[$((i+boardSize*2+2))]} == $currentPlayer ]]
 				then
 					# Victory message!
-					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					print_victory $currentPlayer
 					# 0 - true
 					return 0
 				fi
@@ -405,7 +426,7 @@ function tic_tac_toe() {
 				if [[ ${board[$i]} == $currentPlayer && ${board[$((i+boardSize+1))]} == $currentPlayer && ${board[$((i+boardSize*2+2))]} == $currentPlayer && ${board[$((i+boardSize*3+3))]} == $currentPlayer ]]
 				then
 					# Victory message!
-					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					print_victory $currentPlayer
 					# 0 - true
 					return 0
 				fi
@@ -414,7 +435,7 @@ function tic_tac_toe() {
 				if [[ ${board[$i]} == $currentPlayer && ${board[$((i+boardSize+1))]} == $currentPlayer && ${board[$((i+boardSize*2+2))]} == $currentPlayer && ${board[$((i+boardSize*3+3))]} == $currentPlayer && ${board[$((i+boardSize*4+4))]} == $currentPlayer ]]
 				then
 					# Victory message!
-					echo -e "${cl_green}Player $currentPlayer has won !!!!${cl_reset}"
+					print_victory $currentPlayer
 					# 0 - true
 					return 0
 				fi
@@ -610,5 +631,5 @@ function operation() {
 }
 
 # Calling main function.
-#main $1 $2
-tic_tac_toe $1 $2
+main
+#tic_tac_toe $1 $2
